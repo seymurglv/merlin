@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Keep .claude/ in git even if a global gitignore excludes it
+!.claude/
+
+# Personal / local-only Claude files
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Python
+__pycache__/
+*.pyc

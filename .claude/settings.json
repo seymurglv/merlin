@@ -1,0 +1,26 @@
+{
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL_FORCE": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Edit(/**)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ],
+    "ask": [
+      "Edit(/.claude/settings*.json)",
+      "Edit(/.git/**)",
+      "Bash(rm *)",
+      "Bash(git push *)",
+      "Bash(git reset *)",
+      "Bash(git clean *)",
+      "Bash(git checkout *)",
+      "Bash(git restore *)"
+    ]
+  }
+}
