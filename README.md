@@ -1,10 +1,27 @@
-# merlin
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.svg">
+  <img src=".github/assets/logo.svg" alt="merlin" width="96">
+</picture>
 
-A Claude Code workspace that remembers.
+<br>
 
-One folder for all your projects. Each project keeps its own notes, so any new session picks up where the last one stopped. Three short commands handle the routine, and every mistake Claude makes becomes a rule, so it doesn't happen twice.
+[![license](https://img.shields.io/badge/license-MIT-555)](LICENSE) [![Claude Code](https://img.shields.io/badge/Claude%20Code-2.1.257%2B-555)](https://code.claude.com/docs)
 
-We built this to start or continue any project in seconds, without re-explaining everything and without drowning in setup. It works for code and non-code projects alike.
+**merlin** is a Claude Code workspace that remembers. You keep all your projects in one folder, and each one keeps its own notes, so a new session picks up exactly where the last one stopped. Three short commands handle the routine, and every mistake Claude makes becomes a rule so it doesn't happen twice.
+
+It works for any kind of project, code or not.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/loop-dark.png">
+  <img src=".github/assets/loop.png" alt="/sts reads where you left off, you work, /wrp writes the handoff to log.md, the next session starts right there" width="800">
+</picture>
+
+## Why it works
+
+- **Simple.** Three commands and a few plain Markdown files. There's no database, no plugin and nothing extra to install.
+- **You're in control.** Everything Claude knows about your projects lives in files you can read, edit and version with git. Nothing is hidden, and you can fix any note by hand.
+- **Small, focused context.** A session loads the workspace rules, the project you're working on, and the latest handoff. It doesn't load your whole history. Claude Code only reads a project's `CLAUDE.md` when it works in that folder, so other projects stay out of the way.
+- **Short by design.** Rules are one line each, a handoff is a few bullets, and each `CLAUDE.md` stays under 200 lines. The [Claude Code docs](https://code.claude.com/docs/en/memory) note that longer instruction files use more context and are followed less reliably.
 
 ## Quick start
 
@@ -20,21 +37,58 @@ git clone https://github.com/seymurglv/merlin.git my-workspace
 cd my-workspace && rm -rf .git && git init
 ```
 
-Then open Claude Code in that folder and run:
+Open Claude Code in the folder and create your first project:
 
 ```
 /new-project my-first-project what this project is for
 ```
 
-## Three commands
+## Commands
 
 | Command | When | What it does |
 |---|---|---|
-| `/sts` | start of a session | Shows every project's phase, the last session, and the next step |
-| `/wrp` | end of a session | Writes the handoff into the project's `log.md`, updates status, logs mistakes, commits locally |
-| `/new-project` | new idea | Creates a project folder from the template and adds it to `PROJECTS.md` |
+| `/sts` | Start | Shows each project's phase, the last session, and the next step |
+| `/wrp` | End | Writes the handoff to `log.md`, updates status, logs mistakes, commits locally |
+| `/new-project` | New idea | Creates a project folder from the template and adds it to `PROJECTS.md` |
 
-The short names are on purpose: they don't clash with Claude Code's built-in commands (there's already a built-in `/status`).
+The names are short on purpose, and they don't clash with Claude Code's built-in commands. There's already a built-in `/status`.
+
+## What a handoff looks like
+
+When you run `/wrp`, it adds an entry like this to the top of the project's `log.md`:
+
+```md
+## 2026-10-02: landing page draft
+
+**Done**
+- Built the hero section in `site/index.html`
+
+**Decisions (user agreed)**
+- Keep the page single-column
+
+**Open**
+- Which font for headings?
+
+**Next steps**
+1. Add the pricing section
+```
+
+Next time, `/sts` reads that entry back:
+
+| Project | Phase | Last session | Next step |
+|---|---|---|---|
+| landing-page | Building | 2026-10-02: hero done | Add pricing section |
+
+*Illustrative example. Your entries will reflect your own work.*
+
+## Habits built in
+
+- **Plan first, then go.** For anything bigger than a quick fix, you agree on a plan first, then Claude runs without stopping.
+- **Mistakes become rules.** When Claude gets something wrong, it adds a row to the mistake log in `CLAUDE.md`, and every future session reads it.
+- **Every session ends with a handoff.** `/wrp` writes down what was done, what was decided, and what's next. `/sts` reads it back.
+- **Verify before "done".** Every command ends with a check, and Claude says what it verified.
+- **Helpers on the same model.** The subagents use `model: inherit` at medium, high, and xhigh effort, so no task quietly lands on a weaker model.
+- **Safe permissions, not zero permissions.** Routine actions run without asking, and risky ones always ask.
 
 ## What's inside
 
@@ -52,30 +106,27 @@ The short names are on purpose: they don't clash with Claude Code's built-in com
     └── log.md           session log, newest first
 ```
 
-## How we work
+## Details
 
-- **Plan first, then go.** For anything bigger than a quick fix, agree on the plan, then let Claude run without stopping.
-- **Mistakes become rules.** When Claude gets something wrong, it adds a row to the mistake log in `CLAUDE.md`. Every future session reads it.
-- **Every session ends with a handoff.** `/wrp` writes what was done, what was decided, and the next step into `log.md`. `/sts` reads it back next time.
-- **Verify before "done".** Run it, check it, and say what was checked. Every command ends with a verification step.
-- **Helpers on the same model.** The three subagents use `model: inherit` at different effort levels (medium, high, xhigh), so no task quietly lands on a weaker model.
-- **Safe permissions, not zero permissions.** Routine actions run without asking, and risky ones always ask.
-
-## Under the hood
-
-- **Two layers of rules.** The root `CLAUDE.md` holds workspace rules; each project's `CLAUDE.md` holds its own. Open Claude Code inside a project folder and it loads both.
+- **Two layers of rules.** The root `CLAUDE.md` holds the workspace rules, and each project's `CLAUDE.md` holds its own. Open Claude Code inside a project folder and it loads both.
 - **Permissions** (`.claude/settings.json`):
-  - Run without asking: edits inside the workspace, plus git `status`, `diff`, `log`, `add` and `commit`.
-  - Always ask, even in auto mode: deleting files, and git `push`, `reset`, `clean`, `checkout` and `restore`.
-- **Same model everywhere.** `settings.json` sets `CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1`, so built-in helpers run on your main model too. This needs Claude Code v2.1.257 or later; on older versions, remove the `env` block.
-- **Keep it a git repo.** Claude Code's auto memory is keyed to the git repository, so every session in this workspace shares one memory, even sessions opened inside a project folder.
+  - These run without asking: edits inside the workspace, and git `status`, `diff`, `log`, `show`, `add` and `commit`.
+  - These always ask, even in auto mode: deleting files, and git `push`, `reset`, `clean`, `checkout` and `restore`.
+- **Same model everywhere.** `settings.json` sets `CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1`, so built-in helpers run on your main model too.
+- **One memory.** Claude Code's auto memory is keyed to the git repository. If you keep the workspace a git repo, every session shares one memory, even sessions opened inside a project folder.
 
 ## Make it yours
 
-- **Rules:** add your own under the marked line in `CLAUDE.md` (language, tone, things Claude must never do).
-- **Commands:** allow more commands in `.claude/settings.json`, e.g. `"Bash(npm run *)"` or `"Bash(python3 *)"`.
+- **Rules:** add your own under the marked line in `CLAUDE.md`, such as language, tone, or things Claude must never do.
+- **Commands:** allow more commands in `.claude/settings.json`, for example `"Bash(npm run *)"` or `"Bash(python3 *)"`.
 - **Project-only commands:** put them in `<project>/.claude/skills/`.
-- **Global gitignore:** if yours ignores `.claude/`, the `!.claude/` line in `.gitignore` keeps this folder in git.
+- **Global gitignore:** if yours ignores `.claude/`, the `!.claude/` line in `.gitignore` keeps it in git.
+
+## Requirements
+
+- [Claude Code](https://code.claude.com/docs) 2.1.257 or later. That's needed for the subagent model setting. On older versions, remove the `env` block from `.claude/settings.json`.
+- git
+- [GitHub CLI](https://cli.github.com), optional, for the one-line quick start
 
 ## License
 

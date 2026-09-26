@@ -38,6 +38,7 @@ Shared instructions for every Claude session in this workspace. Project-specific
 
 - Decisions go into a project's `strategy/` or `decisions` section, and only after the user agrees.
 - Keep replies short. Explain new terms with an example.
+- **Keep context small.** Each rule is one line. A log entry is a few bullets. Keep every `CLAUDE.md` under 200 lines; when one grows, move the details into the project's own files.
 
 <!-- Add your own rules below: language, tone, things Claude must never do, etc. -->
 
