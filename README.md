@@ -19,7 +19,7 @@ It works for any kind of project, code or not.
 ## Why it works
 
 - **Simple.** Three commands and a few plain Markdown files. There's no database, no plugin and nothing extra to install.
-- **You're in control.** Everything Claude knows about your projects lives in files you can read, edit and version with git. Nothing is hidden, and you can fix any note by hand.
+- **You can see and edit everything.** Everything Claude knows about your projects lives in files you can read, edit and version with git. Nothing is hidden, and you can fix any note by hand.
 - **Small, focused context.** A session loads the workspace rules, the project you're working on, and the latest handoff. It doesn't load your whole history. Claude Code only reads a project's `CLAUDE.md` when it works in that folder, so other projects stay out of the way.
 - **Short by design.** Rules are one line each, a handoff is a few bullets, and each `CLAUDE.md` stays under 200 lines. The [Claude Code docs](https://code.claude.com/docs/en/memory) note that longer instruction files use more context and are followed less reliably.
 
